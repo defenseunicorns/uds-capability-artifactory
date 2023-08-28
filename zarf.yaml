@@ -63,4 +63,3 @@ components:
       # - releases-docker.jfrog.io/jfrog/xray-persist:3.31.1
       # - releases-docker.jfrog.io/jfrog/xray-server:3.31.1
       # - releases-docker.jfrog.io/vault:1.3.4
-``
