@@ -1,0 +1,4 @@
+namespaces:
+  - name: artifactory
+    labels:
+      istio-injection: enabled

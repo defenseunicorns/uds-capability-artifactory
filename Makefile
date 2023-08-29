@@ -137,7 +137,7 @@ cluster/destroy: ## Destroy the k3d cluster
 # Build Section
 ########################################################################
 
-build/all: build build/zarf build/zarf-init.sha256 build/dubbd-pull-k3d.sha256 build/uds-capability-artifactory ##
+build/all: build build/zarf build/zarf-init.sha256 build/dubbd-pull-k3d.sha256 build/test-pkg-deps build/uds-capability-artifactory ##
 
 build: ## Create build directory
 	mkdir -p build
@@ -167,6 +167,9 @@ build/dubbd-pull-k3d.sha256: | build ## Download dubbd k3d oci package
 	echo "Creating shasum of the dubbd-k3d package"
 	shasum -a 256 build/zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst | awk '{print $$1}' > build/dubbd-pull-k3d.sha256
 
+build/test-pkg-deps: | build ## Build package dependencies for testing
+	build/zarf package create utils/pkg-deps/namespaces/ --skip-sbom --confirm --output-directory build
+	build/zarf package create utils/pkg-deps/artifactory/postgres/ --skip-sbom --confirm --output-directory build
 
 build/uds-capability-artifactory: | build ## Build the artifactory capability
 	build/zarf package create . --skip-sbom --confirm --output-directory build
@@ -182,6 +185,10 @@ deploy/init: ## Deploy the zarf init package
 
 deploy/dubbd-k3d: ## Deploy the k3d flavor of DUBBD
 	cd ./build && ./zarf package deploy zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst --confirm
+
+deploy/test-pkg-deps: ## Deploy the package dependencies needed for testing the artifactory capability
+	cd ./build && ./zarf package deploy zarf-package-artifactory-namespaces-amd-* --confirm
+	cd ./build && ./zarf package deploy zarf-package-artifactory-postgres-amd-* --confirm
 
 deploy/uds-capability-artifactory: ## Deploy the artifactory capability
 	cd ./build && ./zarf package deploy zarf-package-artifactory-amd*.tar.zst --confirm
