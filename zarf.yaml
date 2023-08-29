@@ -10,9 +10,11 @@ variables:
   - name: ARTIFACTORY_DEPENDS_ON
     default: "[]"
   - name: ARTIFACTORY_CREATE_NAMESPACE
-    default: "true"
+    default: "false"
   - name: ISTIO_VERSION
     default: "unset"
+  - name: DOMAIN
+    default: "bigbang.dev"
 
 components:
   - name: istio-version
@@ -63,3 +65,9 @@ components:
       # - releases-docker.jfrog.io/jfrog/xray-persist:3.31.1
       # - releases-docker.jfrog.io/jfrog/xray-server:3.31.1
       # - releases-docker.jfrog.io/vault:1.3.4
+  - name: artifactory-vs
+    required: true
+    manifests:
+      - name: artifactory-vs
+        files:
+          - manifests/virtualservice.yaml

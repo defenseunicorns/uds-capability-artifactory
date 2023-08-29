@@ -15,9 +15,9 @@ application:
       imageRegistry: registry1.dso.mil
       artifactoryHaEnabled: false
       database:
-        host: "artifactory-postgress.artifactory.svc.cluster.local"
+        host: "artifactory-postgres"
         port: 5432
-        sslMode: "require"
+        # sslMode: "require"
         adminUsername: "artifactory"
         secrets:
           adminPassword:
