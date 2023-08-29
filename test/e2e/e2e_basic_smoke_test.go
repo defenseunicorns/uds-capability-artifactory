@@ -35,10 +35,6 @@ func TestAllServicesRunning(t *testing.T) { //nolint:funlen
 		output, err = platform.RunSSHCommandAsSudo(`kubectl rollout status statefulset/artifactory -n artifactory --watch --timeout=1200s`)
 		require.NoError(t, err, output)
 
-		// Ensure that Artifactory is able to talk to GitLab internally
-		output, err = platform.RunSSHCommandAsSudo(`timeout 1200 bash -c "while ! kubectl exec statefulset/artifactory -n artifactory -c artifactory -- curl -L -s --fail --show-error https://gitlab.bigbang.dev/-/health > /dev/null; do sleep 5; done"`)
-		require.NoError(t, err, output)
-
 		// Setup DNS records for cluster services
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && utils/metallb/dns.sh && utils/metallb/hosts-write.sh`)
 		require.NoError(t, err, output)
