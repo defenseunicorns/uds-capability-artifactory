@@ -36,7 +36,7 @@ components:
     repos:
       - https://repo1.dso.mil/big-bang/apps/third-party/jfrog-platform.git
     images:
-      - registry1.dso.mil/ironbank/jfrog/artifactory/artifactory:7.63.11
+      - registry1.dso.mil/ironbank/jfrog/artifactory/artifactory:7.55.9
       - registry1.dso.mil/ironbank/opensource/postgres/postgresql:13.10
       - registry1.dso.mil/ironbank/redhat/ubi/ubi9-minimal:9.1.0
       # Currently unused, will need to be modified if any further. These are also out of date.

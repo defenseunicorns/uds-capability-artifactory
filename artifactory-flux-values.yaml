@@ -6,7 +6,7 @@ application:
   repository: https://repo1.dso.mil/big-bang/apps/third-party/jfrog-platform.git
   ref:
     # renovate: datasource=gitlab-tags depName=big-bang/apps/third-party/jfrog-platform versioning=loose registryUrl=https://repo1.dso.mil
-    tag: 10.14.4
+    tag: 10.12.1
   dependsOn:
     ###ZARF_VAR_ARTIFACTORY_DEPENDS_ON###
   baseValues:
@@ -37,7 +37,7 @@ application:
         image:
           registry: registry1.dso.mil
           repository: ironbank/jfrog/artifactory/artifactory
-          tag: 7.63.11
+          tag: 7.55.9
         # Uncomment if you want to specify a particular storage class
         # persistence:
         #   storageClassName: "your-storage-class-here"
