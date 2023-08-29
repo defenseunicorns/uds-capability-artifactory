@@ -178,7 +178,7 @@ build/uds-capability-artifactory: | build ## Build the artifactory capability
 # Deploy Section
 ########################################################################
 
-deploy/all: deploy/init deploy/dubbd-k3d deploy/uds-capability-artifactory ##
+deploy/all: deploy/init deploy/dubbd-k3d deploy/test-pkg-deps deploy/uds-capability-artifactory ##
 
 deploy/init: ## Deploy the zarf init package
 	./build/zarf init --confirm --components=git-server
