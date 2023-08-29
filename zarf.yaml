@@ -38,36 +38,14 @@ components:
     repos:
       - https://repo1.dso.mil/big-bang/apps/third-party/jfrog-platform.git
     images:
-      - registry1.dso.mil/ironbank/jfrog/artifactory/artifactory:7.55.9
+      - registry1.dso.mil/ironbank/jfrog/artifactory/artifactory:7.63.9
       - registry1.dso.mil/ironbank/opensource/postgres/postgresql:13.10
       - registry1.dso.mil/ironbank/redhat/ubi/ubi9-minimal:9.1.0
-      # Currently unused, will need to be modified if any further. These are also out of date.
-      # jfrog/artifactory services are enabled
-      # - releases-docker.jfrog.io/alpine:3.13.5
-      # - releases-docker.jfrog.io/bitnami/postgresql:13.2.0-debian-10-r55
-      # - releases-docker.jfrog.io/bitnami/rabbitmq:3.8.14-debian-10-r32
-      # - releases-docker.jfrog.io/bitnami/redis:6.2.1-debian-10-r9
-      # - releases-docker.jfrog.io/jfrog/distribution-distribution:2.9.2
-      # - releases-docker.jfrog.io/jfrog/elasticsearch-sg:7.13.2
-      # - releases-docker.jfrog.io/jfrog/insight-scheduler:4.7.11
-      # - releases-docker.jfrog.io/jfrog/insight-server:4.7.11
-      # - releases-docker.jfrog.io/jfrog/mission-control:4.7.11
-      # - releases-docker.jfrog.io/jfrog/nginx-artifactory-pro:7.24.3
-      # - releases-docker.jfrog.io/jfrog/pipelines-api:1.17.6
-      # - releases-docker.jfrog.io/jfrog/pipelines-installer:1.17.6
-      # - releases-docker.jfrog.io/jfrog/pipelines-micro:1.17.6
-      # - releases-docker.jfrog.io/jfrog/pipelines-router:1.17.6
-      # - releases-docker.jfrog.io/jfrog/pipelines-vault-init:1.17.6
-      # - releases-docker.jfrog.io/jfrog/pipelines-www:1.17.6
-      # - releases-docker.jfrog.io/jfrog/router:7.24.1
-      # - releases-docker.jfrog.io/jfrog/xray-analysis:3.31.1
-      # - releases-docker.jfrog.io/jfrog/xray-indexer:3.31.1
-      # - releases-docker.jfrog.io/jfrog/xray-persist:3.31.1
-      # - releases-docker.jfrog.io/jfrog/xray-server:3.31.1
-      # - releases-docker.jfrog.io/vault:1.3.4
-  - name: artifactory-vs
+      - registry1.dso.mil/ironbank/jfrog/jfrog-xray/router:7.61.1
+  - name: artifactory-support-manifests
     required: true
     manifests:
-      - name: artifactory-vs
+      - name: artifactory-support-manifests
         files:
           - manifests/virtualservice.yaml
+          - manifests/db-static-secret.yaml

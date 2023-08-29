@@ -6,7 +6,7 @@ application:
   repository: https://repo1.dso.mil/big-bang/apps/third-party/jfrog-platform.git
   ref:
     # renovate: datasource=gitlab-tags depName=big-bang/apps/third-party/jfrog-platform versioning=loose registryUrl=https://repo1.dso.mil
-    tag: 10.12.1
+    tag: 10.14.4
   dependsOn:
     ###ZARF_VAR_ARTIFACTORY_DEPENDS_ON###
   baseValues:
@@ -14,40 +14,44 @@ application:
     global:
       imageRegistry: registry1.dso.mil
       artifactoryHaEnabled: false
+      imagePullSecrets:
+        - private-registry
       database:
-        host: "artifactory-postgres"
-        port: 5432
-        # sslMode: "require"
-        adminUsername: "artifactory"
-        secrets:
-          adminPassword:
-            name: "artifactory-postgres"
-            key: "password"
         initContainerSetupDBImage: registry1.dso.mil/ironbank/opensource/postgres/postgresql:13.10
         initContainerSetupDBUser: 0
         initDBCreation: false
-    rabbitmq:
-      enabled: false
-    redis:
-      enabled: false
+
     artifactory:
-      enabled: true
       initContainerImage: registry1.dso.mil/ironbank/redhat/ubi/ubi9-minimal:9.1.0
       artifactory:
+        name: artifactory
         image:
           registry: registry1.dso.mil
           repository: ironbank/jfrog/artifactory/artifactory
-          tag: 7.55.9
-        # Uncomment if you want to specify a particular storage class
-        # persistence:
-        #   storageClassName: "your-storage-class-here"
+      router:
+        name: router
+        image:
+          registry: registry1.dso.mil
+          repository: ironbank/jfrog/jfrog-xray/router
+      database:
+        type: postgresql
+        driver: org.postgresql.Driver
+        secrets:
+          password:
+            name: artifactory-postgres
+            key: password
+          user:
+            name: artifactory-postgres-static
+            key: user
+          url:
+            name: artifactory-postgres-static
+            key: url
+      installerInfo: '{"productId":"ironbank_helm_artifactory-pro/10.14.4","features":[{"featureId":"Partner/ACC-013116"}]}'
       nginx:
         enabled: false
     postgresql:
       enabled: false
     artifactory-ha:
-      enabled: false
-    xray:
       enabled: false
     distribution:
       enabled: false
@@ -56,4 +60,10 @@ application:
     pipelines:
       enabled: false
     pdnServer:
+      enabled: false
+    redis:
+      enabled: false
+    rabbitmq:
+      enabled: false
+    xray:
       enabled: false
