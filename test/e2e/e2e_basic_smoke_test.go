@@ -27,6 +27,24 @@ func TestAllServicesRunning(t *testing.T) { //nolint:funlen
 		output, err := platform.RunSSHCommandAsSudo(`kubectl get nodes`)
 		require.NoError(t, err, output)
 
-		// TODO add basic tests
+		// Wait for the Artifactory StatefulSet to exist.
+		output, err = platform.RunSSHCommandAsSudo(`timeout 1200 bash -c "while ! kubectl get statefulset artifactory -n artifactory; do sleep 5; done"`)
+		require.NoError(t, err, output)
+
+		// Wait for the Artifactory StatefulSet to report that it is ready
+		output, err = platform.RunSSHCommandAsSudo(`kubectl rollout status statefulset/artifactory -n artifactory --watch --timeout=1200s`)
+		require.NoError(t, err, output)
+
+		// Ensure that Artifactory is able to talk to GitLab internally
+		output, err = platform.RunSSHCommandAsSudo(`timeout 1200 bash -c "while ! kubectl exec statefulset/artifactory -n artifactory -c artifactory -- curl -L -s --fail --show-error https://gitlab.bigbang.dev/-/health > /dev/null; do sleep 5; done"`)
+		require.NoError(t, err, output)
+
+		// Setup DNS records for cluster services
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && utils/metallb/dns.sh && utils/metallb/hosts-write.sh`)
+		require.NoError(t, err, output)
+
+		// Ensure that Artifactory is available outside of the cluster.
+		output, err = platform.RunSSHCommandAsSudo(`timeout 1200 bash -c "while ! curl -L -s --fail --show-error https://artifactory.bigbang.dev/artifactory/api/system/ping > /dev/null; do sleep 5; done"`)
+		require.NoError(t, err, output)
 	})
 }
