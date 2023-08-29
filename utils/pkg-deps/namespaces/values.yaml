@@ -2,3 +2,6 @@ namespaces:
   - name: artifactory
     labels:
       istio-injection: enabled
+  - name: artifactory-db
+    labels:
+      istio-injection: enabled
