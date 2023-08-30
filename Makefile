@@ -11,19 +11,18 @@ BUILD_HARNESS_VERSION := 1.10.2
 DUBBD_K3D_VERSION := 0.6.2
 
 # Figure out which Zarf binary we should use based on the operating system we are on
+# Figure out which Zarf binary we should use based on the operating system we are on
 ZARF_BIN := zarf
 UNAME_S := $(shell uname -s)
-UNAME_P := $(shell uname -p)
-ifneq ($(UNAME_S),Linux)
-	ifeq ($(UNAME_S),Darwin)
-		ZARF_BIN := $(addsuffix -mac,$(ZARF_BIN))
-	endif
-	ifeq ($(UNAME_P),i386)
-		ZARF_BIN := $(addsuffix -intel,$(ZARF_BIN))
-	endif
-	ifeq ($(UNAME_P),arm64)
-		ZARF_BIN := $(addsuffix -apple,$(ZARF_BIN))
-	endif
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_M),x86_64)
+    ARCH := amd64
+else ifeq ($(UNAME_M),amd64)
+    ARCH := amd64
+else ifeq ($(UNAME_M),arm64)
+    ARCH := arm64
+else
+    $(error Unsupported architecture: $(UNAME_M))
 endif
 
 # Silent mode by default. Run `make VERBOSE=1` to turn off silent mode.
@@ -102,6 +101,7 @@ test: ## Run all automated tests. Requires access to an AWS account. Costs money
 	-e AWS_SESSION_EXPIRATION \
 	-e SKIP_SETUP -e SKIP_TEST \
 	-e SKIP_TEARDOWN \
+	-e AWS_AVAILABILITY_ZONE \
 	$(BUILD_HARNESS_REPO):$(BUILD_HARNESS_VERSION) \
 	bash -c 'asdf install && go test -v -timeout 2h -p 1 ./...'
 
@@ -115,7 +115,7 @@ test-ssh: ## Run this if you set SKIP_TEARDOWN=1 and want to SSH into the still-
 # Cluster Section
 ########################################################################
 
-cluster/full: cluster/destroy cluster/create build/all deploy/all ## This will destroy any existing cluster, create a new one, then build and deploy all
+cluster/reset: cluster/destroy cluster/create ## This will destroy any existing cluster and then create a new one
 
 cluster/create: ## Create a k3d cluster with metallb installed
 	K3D_FIX_MOUNTS=1 k3d cluster create k3d-test-cluster --config utils/k3d/k3d-config.yaml
@@ -137,6 +137,7 @@ cluster/destroy: ## Destroy the k3d cluster
 # Build Section
 ########################################################################
 
+.PHONY: build/all
 build/all: build build/zarf build/zarf-init.sha256 build/dubbd-pull-k3d.sha256 build/test-pkg-deps build/uds-capability-artifactory ##
 
 build: ## Create build directory
@@ -146,15 +147,13 @@ build: ## Create build directory
 clean: ## Clean up build files
 	rm -rf ./build
 
-build/zarf: | build ## Download the Linux flavor of Zarf to the build dir
+.PHONY: build/zarf
+.ONESHELL:
+build/zarf: | build ## Download the Zarf to the build dir
+	if [ -f build/zarf ] && [ "$$(build/zarf version)" = "$(ZARF_VERSION)" ] ; then exit 0; fi
 	echo "Downloading zarf"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_Linux_amd64 -o build/zarf
+	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf
 	chmod +x build/zarf
-
-build/zarf-mac-intel: | build ## Download the Mac (Intel) flavor of Zarf to the build dir
-	echo "Downloading zarf-mac-intel"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_Darwin_amd64 -o build/zarf-mac-intel
-	chmod +x build/zarf-mac-intel
 
 build/zarf-init.sha256: | build ## Download the init package
 	echo "Downloading zarf-init-amd64-$(ZARF_VERSION).tar.zst"
@@ -192,3 +191,13 @@ deploy/test-pkg-deps: ## Deploy the package dependencies needed for testing the 
 
 deploy/uds-capability-artifactory: ## Deploy the artifactory capability
 	cd ./build && ./zarf package deploy zarf-package-artifactory-amd*.tar.zst --confirm
+
+########################################################################
+# Macro Section
+########################################################################
+
+.PHONY: all
+all: build/all cluster/reset deploy/all ## Build and deploy the software factory
+
+.PHONY: rebuild
+rebuild: clean build/all
