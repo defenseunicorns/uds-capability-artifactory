@@ -148,11 +148,10 @@ clean: ## Clean up build files
 	rm -rf ./build
 
 .PHONY: build/zarf
-.ONESHELL:
 build/zarf: | build ## Download the Zarf to the build dir
-	if [ -f build/zarf ] && [ "$$(build/zarf version)" = "$(ZARF_VERSION)" ] ; then exit 0; fi
-	echo "Downloading zarf"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf
+	if [ -f build/zarf ] && [ "$$(build/zarf version)" = "$(ZARF_VERSION)" ] ; then exit 0; fi && \
+	echo "Downloading zarf" && \
+	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf && \
 	chmod +x build/zarf
 
 build/zarf-init.sha256: | build ## Download the init package
@@ -167,11 +166,11 @@ build/dubbd-pull-k3d.sha256: | build ## Download dubbd k3d oci package
 	shasum -a 256 build/zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst | awk '{print $$1}' > build/dubbd-pull-k3d.sha256
 
 build/test-pkg-deps: | build ## Build package dependencies for testing
-	build/zarf package create utils/pkg-deps/namespaces/ --skip-sbom --confirm --output-directory build
-	build/zarf package create utils/pkg-deps/artifactory/postgres/ --skip-sbom --confirm --output-directory build
+	cd build && ./zarf package create utils/pkg-deps/namespaces/ --skip-sbom --confirm --output-directory build
+	cd build && ./zarf package create utils/pkg-deps/artifactory/postgres/ --skip-sbom --confirm --output-directory build
 
 build/uds-capability-artifactory: | build ## Build the artifactory capability
-	build/zarf package create . --skip-sbom --confirm --output-directory build
+	cd build && ./zarf package create . --skip-sbom --confirm --output-directory build
 
 ########################################################################
 # Deploy Section
@@ -180,17 +179,17 @@ build/uds-capability-artifactory: | build ## Build the artifactory capability
 deploy/all: deploy/init deploy/dubbd-k3d deploy/test-pkg-deps deploy/uds-capability-artifactory ##
 
 deploy/init: ## Deploy the zarf init package
-	./build/zarf init --confirm --components=git-server
+	cd build && ./zarf init --confirm --components=git-server
 
 deploy/dubbd-k3d: ## Deploy the k3d flavor of DUBBD
-	cd ./build && ./zarf package deploy zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst --confirm
+	cd build && ./zarf package deploy zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst --confirm
 
 deploy/test-pkg-deps: ## Deploy the package dependencies needed for testing the artifactory capability
-	cd ./build && ./zarf package deploy zarf-package-artifactory-namespaces-amd* --confirm
-	cd ./build && ./zarf package deploy zarf-package-artifactory-postgres-amd* --confirm
+	cd build && ./zarf package deploy zarf-package-artifactory-namespaces-amd* --confirm
+	cd build && ./zarf package deploy zarf-package-artifactory-postgres-amd* --confirm
 
 deploy/uds-capability-artifactory: ## Deploy the artifactory capability
-	cd ./build && ./zarf package deploy zarf-package-artifactory-amd*.tar.zst --confirm
+	cd build && ./zarf package deploy zarf-package-artifactory-amd*.tar.zst --confirm
 
 ########################################################################
 # Macro Section
