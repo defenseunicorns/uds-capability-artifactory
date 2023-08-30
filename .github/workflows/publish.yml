@@ -48,6 +48,16 @@ jobs:
           password: ${{ secrets.REGISTRY1_PASSWORD }}
 
       ####
+      # Build and publish dependency packages to use in a dev UDS Bundle
+      ####
+
+      - name: Build dev-dependency artifactory postgres package
+        run: cd utils/pkg-deps/artifactory/postgres && zarf package create --confirm --no-progress
+
+      - name: Publish dev-dependency artifactory postgres package
+        run: cd utils/pkg-deps/artifactory/postgres && zarf package publish zarf-package-artifactory-postgres-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-capability/artifactory/dev-dependency --no-progress
+
+      ####
       # Build and publish capability package and skeleton
       ####
       - name: Build artifactory package
