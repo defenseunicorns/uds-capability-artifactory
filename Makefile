@@ -161,16 +161,16 @@ build/zarf-init.sha256: | build ## Download the init package
 	shasum -a 256 build/zarf-init-amd64-$(ZARF_VERSION).tar.zst | awk '{print $$1}' > build/zarf-init.sha256
 
 build/dubbd-pull-k3d.sha256: | build ## Download dubbd k3d oci package
-	./build/zarf package pull oci://ghcr.io/defenseunicorns/packages/dubbd-k3d:$(DUBBD_K3D_VERSION)-amd64 --oci-concurrency 9 --output-directory build
+	cd build && ./zarf package pull oci://ghcr.io/defenseunicorns/packages/dubbd-k3d:$(DUBBD_K3D_VERSION)-amd64 --oci-concurrency 9
 	echo "Creating shasum of the dubbd-k3d package"
 	shasum -a 256 build/zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst | awk '{print $$1}' > build/dubbd-pull-k3d.sha256
 
 build/test-pkg-deps: | build ## Build package dependencies for testing
-	cd build && ./zarf package create utils/pkg-deps/namespaces/ --skip-sbom --confirm --output-directory build
-	cd build && ./zarf package create utils/pkg-deps/artifactory/postgres/ --skip-sbom --confirm --output-directory build
+	cd build && ./zarf package create ../utils/pkg-deps/namespaces/ --skip-sbom --confirm
+	cd build && ./zarf package create ../utils/pkg-deps/artifactory/postgres/ --skip-sbom --confirm
 
 build/uds-capability-artifactory: | build ## Build the artifactory capability
-	cd build && ./zarf package create . --skip-sbom --confirm --output-directory build
+	cd build && ./zarf package create ../ --skip-sbom --confirm
 
 ########################################################################
 # Deploy Section
