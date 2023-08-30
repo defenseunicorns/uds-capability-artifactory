@@ -29,8 +29,8 @@ The Artifactory Capability expects the pieces listed below to exist in the clust
 #### Via Makefile and local package
 
 ```bash
-# This will destroy and create a compatible k3d cluster then it will run make build/all and make deploy/all. Follow the breadcrumbs in the Makefile to see what and how its doing it.
-make cluster/full
+# This will run build/all cluster/reset and deploy/all. Follow the breadcrumbs in the Makefile to see what and how its doing it.
+make all
 ```
 
 ### From GHCR OCI Via Zarf
