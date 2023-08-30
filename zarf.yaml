@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: artifactory
+  description: "UDS Artifactory capability deployed via flux"
+  version: "0.0.1"
+  architecture: amd64
+
+variables:
+  - name: ARTIFACTORY_DEPENDS_ON
+    default: "[]"
+  - name: ARTIFACTORY_CREATE_NAMESPACE
+    default: "false"
+  - name: ISTIO_VERSION
+    default: "unset"
+  - name: DOMAIN
+    default: "bigbang.dev"
+
+components:
+  - name: istio-version
+    required: true
+    actions:
+      onDeploy:
+        before:
+          - cmd: kubectl get deployment -n monitoring monitoring-monitoring-kube-operator -o=jsonpath='{.spec.template.metadata.annotations.bigbang\.dev/istioVersion}'
+            setVariable: ISTIO_VERSION
+  - name: artifactory
+    required: true
+    description: "Deploy artifactory via flux"
+    charts:
+    # renovate: datasource=helm
+      - name: flux-app
+        url: https://defenseunicorns.github.io/uds-support-charts/
+        version: 1.0.7
+        namespace: artifactory
+        valuesFiles:
+          - artifactory-flux-values.yaml
+    repos:
+      - https://repo1.dso.mil/big-bang/apps/third-party/jfrog-platform.git
+    images:
+      - registry1.dso.mil/ironbank/jfrog/artifactory/artifactory:7.63.9
+      - registry1.dso.mil/ironbank/opensource/postgres/postgresql:13.10
+      - registry1.dso.mil/ironbank/redhat/ubi/ubi9-minimal:9.1.0
+      - registry1.dso.mil/ironbank/jfrog/jfrog-xray/router:7.61.1
+  - name: artifactory-support-manifests
+    required: true
+    manifests:
+      - name: artifactory-support-manifests
+        files:
+          - manifests/virtualservice.yaml
+          - manifests/db-static-secret.yaml

@@ -1,0 +1,20 @@
+apiVersion: kyverno.io/v2alpha1
+kind: PolicyException
+metadata:
+  name: artifactory-postgres-registry-exception
+  namespace: artifactory-db
+spec:
+  exceptions:
+  - policyName: restrict-image-registries
+    ruleNames:
+    - validate-registries
+    - autogen-validate-registries
+  match:
+    any:
+    - resources:
+        kinds:
+        - StatefulSet
+        namespaces:
+        - artifactory-db
+        names:
+        - postgresql
