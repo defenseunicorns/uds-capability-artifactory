@@ -44,6 +44,7 @@ components:
               - name: DB_PASSWORD
                 sensitive: true
         after:
+          - cmd: kubectl delete secret artifactory-postgres -n artifactory 2>&1 || true
           - cmd: kubectl create secret generic artifactory-postgres -n artifactory --from-literal=password=${ZARF_VAR_DB_PASSWORD}
   - name: postgres-service
     required: true
