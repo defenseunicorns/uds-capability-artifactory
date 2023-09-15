@@ -42,6 +42,13 @@ components:
       - registry1.dso.mil/ironbank/opensource/postgres/postgresql:13.10
       - registry1.dso.mil/ironbank/redhat/ubi/ubi9-minimal:9.1.0
       - registry1.dso.mil/ironbank/jfrog/jfrog-xray/router:7.61.1
+  - name: artifactory-support-manifests
+    required: true
+    manifests:
+      - name: artifactory-support-manifests
+        files:
+          - manifests/virtualservice.yaml
+          - manifests/db-static-secret.yaml
     actions:
       onDeploy:
         after:
@@ -53,11 +60,3 @@ components:
                 namespace: bigbang
             maxTotalSeconds: 900
             description: Artifactory HelmRelease to be Ready
-
-  - name: artifactory-support-manifests
-    required: true
-    manifests:
-      - name: artifactory-support-manifests
-        files:
-          - manifests/virtualservice.yaml
-          - manifests/db-static-secret.yaml
