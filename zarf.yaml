@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: artifactory
   description: "UDS Artifactory capability deployed via flux"
-  version: "0.0.1"
+  version: "0.0.2"
   architecture: amd64
 
 variables:
@@ -49,3 +49,14 @@ components:
         files:
           - manifests/virtualservice.yaml
           - manifests/db-static-secret.yaml
+    actions:
+      onDeploy:
+        after:
+          - wait:
+              cluster:
+                kind: helmRelease
+                name: artifactory
+                condition: Ready
+                namespace: bigbang
+            maxTotalSeconds: 900
+            description: Artifactory HelmRelease to be Ready

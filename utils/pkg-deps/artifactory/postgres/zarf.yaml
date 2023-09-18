@@ -2,7 +2,7 @@
 kind: ZarfPackageConfig
 metadata:
   name: artifactory-postgres
-  version: "0.0.1"
+  version: "0.0.2"
   architecture: amd64
 
 components:
@@ -41,10 +41,15 @@ components:
           - cmd: kubectl get secret -n artifactory-db postgresql --template={{.data.password}} | base64 -d
             mute: true
             setVariables:
-              - name: DB_PASSWORD
+              - name: POSTGRES_DB_PASSWORD
                 sensitive: true
-        after:
-          - cmd: kubectl create secret generic artifactory-postgres -n artifactory --from-literal=password=${ZARF_VAR_DB_PASSWORD}
+  - name: artifactory-postgres-password
+    required: true
+    manifests:
+      - name: artifactory-postgres
+        namespace: artifactory
+        files:
+          - secret.yaml
   - name: postgres-service
     required: true
     manifests:
