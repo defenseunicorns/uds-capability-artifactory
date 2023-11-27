@@ -27,7 +27,7 @@ jobs:
     if: ${{ needs.tag-new-version.outputs.release_created == 'false'}}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT }}
           repository: ${{ github.repository }}
