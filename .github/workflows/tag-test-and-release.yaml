@@ -6,8 +6,9 @@ on:
       - main
 
 permissions:
-  id-token: write
   contents: read
+  packages: write
+  id-token: write
 
 jobs:
   tag-new-version:
