@@ -90,8 +90,6 @@ test: ## Run all automated tests. Requires access to an AWS account. Costs money
 	-e GIT_BRANCH \
 	-e REGISTRY1_USERNAME \
 	-e REGISTRY1_PASSWORD \
-	-e GHCR_USERNAME \
-	-e GHCR_PASSWORD \
 	-e AWS_REGION \
 	-e AWS_DEFAULT_REGION \
 	-e AWS_ACCESS_KEY_ID \

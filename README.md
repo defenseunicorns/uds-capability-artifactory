@@ -36,12 +36,12 @@ make all
 ### From GHCR OCI Via Zarf
 
 ```bash
-zarf package deploy ghcr.io/defenseunicorns/uds-capability/artifactory:0.0.1-amd64
+zarf package deploy ghcr.io/defenseunicorns/uds-capability/artifactory:x.x.x-amd64
 ```
 
 ## Building
 
-### Use zarf to login to the needed registries i.e. registry1.dso.mil and ghcr.io
+### Use zarf to login to the needed registries i.e. registry1.dso.mil
 
 ```bash
 # Download Zarf
@@ -54,11 +54,6 @@ set +o history
 export REGISTRY1_USERNAME="YOUR-USERNAME-HERE"
 export REGISTRY1_TOKEN="YOUR-TOKEN-HERE"
 echo $REGISTRY1_TOKEN | build/zarf tools registry login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
-
-# ghcr.io (If you need to push to GHCR)
-export GH_USERNAME="YOUR-USERNAME-HERE"
-export GH_TOKEN="YOUR-TOKEN-HERE"
-echo $GH_TOKEN | build/zarf tools registry login ghcr.io --username $GH_USERNAME --password-stdin
 
 set -o history
 ```
