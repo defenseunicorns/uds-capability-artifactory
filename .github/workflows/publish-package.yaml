@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT }}
           repository: ${{ github.repository }}
@@ -46,10 +46,10 @@ jobs:
         uses: supplypike/setup-bin@v3
         with:
           # renovate: zarf-uri datasource=github-tags depName=defenseunicorns/zarf
-          uri: 'https://github.com/defenseunicorns/zarf/releases/download/v0.31.1/zarf_v0.31.1_Linux_amd64'
+          uri: 'https://github.com/defenseunicorns/zarf/releases/download/v0.31.2/zarf_v0.31.2_Linux_amd64'
           name: 'zarf'
           # renovate: datasource=github-tags depName=defenseunicorns/zarf versioning=semver
-          version: 'v0.31.1'
+          version: 'v0.31.2'
 
       - name: Build artifactory package
         run: zarf package create --confirm --no-progress
@@ -66,7 +66,7 @@ jobs:
           registry1-password: ${{ secrets.REGISTRY1_PASSWORD }}
 
       - name: Login to GHCR
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
