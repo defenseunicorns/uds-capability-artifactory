@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3](https://github.com/defenseunicorns/uds-capability-artifactory/compare/v0.1.2...v0.1.3) (2023-11-27)
+
+
+### Miscellaneous
+
+* **deps:** Update multiple deps ([#11](https://github.com/defenseunicorns/uds-capability-artifactory/issues/11)) ([2fe5f13](https://github.com/defenseunicorns/uds-capability-artifactory/commit/2fe5f137a03b814449f68ee5474e79f13e7c290c))
+
 ## [0.1.2](https://github.com/defenseunicorns/uds-capability-artifactory/compare/v0.1.1...v0.1.2) (2023-11-27)
 
 
