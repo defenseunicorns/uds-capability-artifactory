@@ -1,5 +1,9 @@
 name: Tag, Test and Publish UDS Capability Artifactory
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   push:
     branches:
