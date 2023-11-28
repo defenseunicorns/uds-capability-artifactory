@@ -1,4 +1,4 @@
-name: build-and-publish-dev-dpes
+name: build-and-publish-dev-deps
 
 concurrency:
     cancel-in-progress: true
