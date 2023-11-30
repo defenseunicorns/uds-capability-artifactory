@@ -51,9 +51,6 @@ jobs:
           # renovate: datasource=github-tags depName=defenseunicorns/zarf versioning=semver
           version: 'v0.31.2'
 
-      - name: Build artifactory package
-        run: zarf package create --confirm --no-progress
-
       - name: Run E2E Tests
         uses: ./.github/actions/e2e
         with:
@@ -71,6 +68,18 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      ####
+      # Build and publish dev dependency and capability packages
+      ####
+      - name: Build dev-dependency artifactory postgres package
+        run: cd utils/pkg-deps/artifactory/postgres && zarf package create --confirm --no-progress
+
+      - name: Publish dev-dependency artifactory postgres package
+        run: cd utils/pkg-deps/artifactory/postgres && zarf package publish zarf-package-artifactory-postgres-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-capability/artifactory/dev-dependency --no-progress
+
+      - name: Build artifactory package
+        run: zarf package create --confirm --no-progress
 
       - name: Publish artifactory package
         run: zarf package publish zarf-package-artifactory-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-capability --no-progress
