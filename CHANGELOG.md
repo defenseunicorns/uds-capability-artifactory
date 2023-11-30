@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.4](https://github.com/defenseunicorns/uds-capability-artifactory/compare/v0.1.3...v0.1.4) (2023-11-30)
+
+
+### Miscellaneous
+
+* Sync dev dep versions with release ([c942daf](https://github.com/defenseunicorns/uds-capability-artifactory/commit/c942daf2ec8a91f6292fe71cb713c86550b43573))
+* Update to only publish packages on release ([b726ecd](https://github.com/defenseunicorns/uds-capability-artifactory/commit/b726ecdc5482896ad101e3632f9812228ec1c0d4))
+
 ## [0.1.3](https://github.com/defenseunicorns/uds-capability-artifactory/compare/v0.1.2...v0.1.3) (2023-11-27)
 
 
